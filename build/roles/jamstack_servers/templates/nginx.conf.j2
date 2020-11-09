@@ -1,0 +1,18 @@
+server {
+  listen 80;
+  listen [::]:80;
+
+  root /var/www/html/{{ jamstack_domain_name_primary }};
+
+  index index.html;
+
+  server_name {{ jamstack_domain_name_primary }} {{ jamstack_domain_name_secondary }};
+
+  location / {
+    try_files $uri $uri/ =404;
+  }
+
+  location ~ /\.ht {
+    deny all;
+  }
+}

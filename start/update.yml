@@ -1,0 +1,21 @@
+---
+- hosts: all
+  become: true
+  pre_tasks:
+    - name: Update server repository cache
+      tags: always
+      apt:
+        update_cache: yes
+      when: ansible_distribution == "Ubuntu"
+
+    - name: Update all servers
+      tags: always
+      apt:
+        upgrade: dist
+      when: ansible_distribution == "Ubuntu"
+
+    - name: Remove unneeded dependencies
+      tags: always
+      apt:
+        autoremove: yes
+      when: ansible_distribution == "Ubuntu"

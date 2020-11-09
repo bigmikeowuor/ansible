@@ -1,0 +1,46 @@
+---
+- hosts: all
+  become: true
+  pre_tasks:
+    - name: Update the server repository cache
+      tags: always
+      apt:
+        update_cache: yes
+      changed_when: false
+      when: ansible_distribution == "Ubuntu"
+
+- hosts: all
+  become: true
+  roles:
+    - basic
+
+- hosts: mariadb_servers
+  become: true
+  no_log: true
+  roles:
+    - mariadb_servers
+
+- hosts: php_servers
+  become: true
+  roles:
+    - php_servers
+
+- hosts: adminer_servers
+  become: true
+  roles:
+    - adminer_servers
+
+- hosts: wordpress_servers
+  become: true
+  roles:
+    - wordpress_servers
+
+- hosts: jamstack_api_servers
+  become: true
+  roles:
+    - jamstack_api_servers
+
+- hosts: jamstack_servers
+  become: true
+  roles:
+    - jamstack_servers

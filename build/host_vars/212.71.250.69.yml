@@ -1,0 +1,24 @@
+# This is a WordPress server. It may host more than one domain for the client. Indicate them below:
+# BeDazzaled Events Limited - bdazzaled.co.ke - 07/11/2020 @ 12:00
+
+# Client configuration settings
+server_ip_address: '212.71.250.69'
+client_database_name: 'bd_wordpress_db'
+
+# WordPress configuration settings
+wordpress_client_code: 'bd'
+wordpress_domain_name_primary: 'bdazzaled.co.ke'
+wordpress_domain_name_secondary: 'www.bdazzaled.co.ke'
+wordpress_nginx_conf_j2: nginx.conf.j2
+wordpress_nginx_conf_file_name: 'bdazzaled.co.ke.conf'
+wordpress_config_j2: wp-config.php.j2
+
+# Adminer configuration settings
+adminer_domain_name: 'adminer.bdazzaled.co.ke'
+adminer_nginx_conf_j2: nginx.conf.j2
+adminer_nginx_conf_file_name: 'adminer.bdazzaled.co.ke.conf'
+
+# Common database settings
+database_root_password: 'Pass@word8475'
+database_utility_user_name: 'dataman'
+database_utility_user_password: 'Pass@word8475'

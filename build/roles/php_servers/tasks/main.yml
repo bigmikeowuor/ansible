@@ -1,0 +1,55 @@
+- name: Install PHP and related modules
+  tags: ubuntu, php
+  apt:
+    name:
+      - php
+      - php-bcmath
+      - php-bz2
+      - php-curl
+      - php-fpm
+      - php-gd
+      - php-gmp
+      - php-imagick
+      - php-intl
+      - php-json
+      - php-mbstring
+      - php-mysql
+      - php-pear
+      - php-xml
+      - php-xmlrpc
+      - php-zip
+    state: latest
+  when: ansible_distribution == "Ubuntu"
+
+- name: Ensure Nginx is set up to use FastCGI correctly
+  tags: ubuntu, php
+  lineinfile:
+    path: /etc/php/7.4/fpm/php.ini
+    regexp: '^(.*)cgi.fix_pathinfo='
+    line: cgi.fix_pathinfo=0
+  notify:
+    - Restart PHP-FPM
+    - Restart Nginx
+  when: ansible_distribution == "Ubuntu"
+
+- name: Increase maximum file upload size
+  tags: ubuntu, php
+  lineinfile:
+    path: /etc/php/7.4/fpm/php.ini
+    regexp: '^upload_max_filesize'
+    line: upload_max_filesize = 8M
+  notify:
+    - Restart PHP-FPM
+    - Restart Nginx
+  when: ansible_distribution == "Ubuntu"
+
+- name: Increase maximum post size
+  tags: ubuntu, php
+  lineinfile:
+    path: /etc/php/7.4/fpm/php.ini
+    regexp: '^post_max_size'
+    line: post_max_size = 32M
+  notify:
+    - Restart PHP-FPM
+    - Restart Nginx
+  when: ansible_distribution == "Ubuntu"

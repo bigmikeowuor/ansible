@@ -1,0 +1,67 @@
+- name: Set JAM stack Nginx conf file
+  tags: ubuntu, jam
+  template:
+    src: '{{ jamstack_nginx_conf_j2 }}'
+    dest: '/etc/nginx/sites-available/{{ jamstack_nginx_conf_file_name }}'
+  when: ansible_distribution == "Ubuntu"
+
+- name: Remove "default" site
+  tags: ubuntu, jam
+  file:
+    path: '{{ item.path }}'
+    state: absent
+  loop:
+    - { path: /etc/nginx/sites-available/default }
+    - { path: /etc/nginx/sites-enabled/default }
+  notify:
+    - Restart Nginx
+  when: ansible_distribution == "Ubuntu"
+
+- name: Enable new JAM stack site
+  tags: ubuntu, jam
+  file:
+    src: '/etc/nginx/sites-available/{{ jamstack_nginx_conf_file_name }}'
+    dest: '/etc/nginx/sites-enabled/{{ jamstack_nginx_conf_file_name }}'
+    state: link
+  notify:
+    - Restart Nginx
+  when: ansible_distribution == "Ubuntu"
+
+- name: Remove unnecessary html files
+  tags: ubuntu, jam
+  file:
+    path: '/var/www/html/{{ item.src }}'
+    state: absent
+  loop:
+    - { src: index.html }
+    - { src: index.nginx-debian.html }
+  when: ansible_distribution == "Ubuntu"
+
+- name: Create a document root for JAM stack site
+  tags: ubuntu, jam
+  file:
+    path: '/var/www/html/{{ jamstack_domain_name_primary }}'
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0775'
+  when: ansible_distribution == "Ubuntu"
+
+- name: Set default page to test server functionality
+  tags: ubuntu, jam
+  template:
+    src: '{{ jamstack_index_html_j2 }}'
+    dest: '/var/www/html/{{ jamstack_domain_name_primary }}/index.html'
+    owner: www-data
+    group: www-data
+    mode: '0644'
+  when: ansible_distribution == "Ubuntu"
+
+- name: Add mappings to the /etc/hosts file
+  tags: ubuntu, jam
+  blockinfile:
+    path: /etc/hosts
+    block: |
+      {{ server_ip_address }} {{ jamstack_domain_name_primary }}
+    marker: '# {mark} Mapping Block for {{ jamstack_domain_name_primary }}'
+  when: ansible_distribution == "Ubuntu"

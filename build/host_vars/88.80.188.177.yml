@@ -1,0 +1,22 @@
+# This is an application server. It will host more than one API domain. Indicate them below:
+# Superior Software Solutions Limited - api.s3interdev.com - 07/11/2020 @ 12:00
+
+# Client configuration settings
+server_ip_address: '88.80.188.177'
+client_database_name: 's3_strapi_db'
+
+# JAM stack API configuration settings
+jamstack_domain_name_primary: 'api.s3interdev.com'
+jamstack_index_html_j2: index.html.j2
+jamstack_nginx_conf_j2: nginx.conf.j2
+jamstack_nginx_conf_file_name: 'api.s3interdev.com.conf'
+
+# Adminer configuration settings
+adminer_domain_name: 'adminer.uwezoapps.com'
+adminer_nginx_conf_j2: nginx.conf.j2
+adminer_nginx_conf_file_name: 'adminer.uwezoapps.com.conf'
+
+# Common database settings
+database_root_password: 'Pass@word8475'
+database_utility_user_name: 'dataman'
+database_utility_user_password: 'Pass@word8475'

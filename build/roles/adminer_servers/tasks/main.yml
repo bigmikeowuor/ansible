@@ -1,0 +1,67 @@
+- name: Set Adminer Nginx conf file
+  tags: ubuntu, nginx, adminer
+  template:
+    src: '{{ adminer_nginx_conf_j2 }}'
+    dest: '/etc/nginx/sites-available/{{ adminer_nginx_conf_file_name }}'
+  when: ansible_distribution == "Ubuntu"
+
+- name: Remove "default" site
+  tags: ubuntu, nginx, adminer
+  file:
+    path: '{{ item.path }}'
+    state: absent
+  loop:
+    - { path: /etc/nginx/sites-available/default }
+    - { path: /etc/nginx/sites-enabled/default }
+  notify:
+    - Restart Nginx
+  when: ansible_distribution == "Ubuntu"
+
+- name: Enable new Adminer site
+  tags: ubuntu, nginx, adminer
+  file:
+    src: '/etc/nginx/sites-available/{{ adminer_nginx_conf_file_name }}'
+    dest: '/etc/nginx/sites-enabled/{{ adminer_nginx_conf_file_name }}'
+    state: link
+  notify:
+    - Restart Nginx
+  when: ansible_distribution == "Ubuntu"
+
+- name: Remove unnecessary html files
+  tags: ubuntu, nginx, adminer
+  file:
+    path: '/var/www/html/{{ item.src }}'
+    state: absent
+  loop:
+    - { src: index.html }
+    - { src: index.nginx-debian.html }
+  when: ansible_distribution == "Ubuntu"
+
+- name: Create a document root for Adminer
+  tags: ubuntu, nginx, adminer
+  file:
+    path: '/var/www/html/{{ adminer_domain_name }}'
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0775'
+  when: ansible_distribution == "Ubuntu"
+
+- name: Add mappings to the /etc/hosts file
+  tags: ubuntu, nginx, adminer
+  blockinfile:
+    path: /etc/hosts
+    block: |
+      {{ server_ip_address }} {{ adminer_domain_name }}
+    marker: '# {mark} Mapping Block for {{ adminer_domain_name }}'
+  when: ansible_distribution == "Ubuntu"
+
+- name: Download and unpack the latest version of Adminer
+  tags: ubuntu, nginx, adminer
+  get_url:
+    url: https://www.adminer.org/latest.php
+    dest: '/var/www/html/{{ adminer_domain_name }}/index.php'
+    mode: '0644'
+  notify:
+    - Restart Nginx
+  when: ansible_distribution == "Ubuntu"

@@ -1,0 +1,59 @@
+- name: Install the MariaDB server and client
+  tags: db, mariadb
+  apt:
+    name:
+      - mariadb-server
+      - mariadb-client
+      - python3-mysqldb
+    state: latest
+  when: ansible_distribution == "Ubuntu"
+
+- name: Set the MariaDB root password
+  tags: db, mariadb
+  mysql_user:
+    name: root
+    check_implicit_admin: yes
+    password: '{{ database_root_password }}'
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    login_user: root
+    login_password: '{{ database_root_password }}'
+  when: ansible_distribution == "Ubuntu"
+
+- name: Remove all anonymous user accounts in the database
+  tags: db, mariadb
+  mysql_user:
+    name: ''
+    host_all: yes
+    state: absent
+    login_user: root
+    login_password: '{{ database_root_password }}'
+  when: ansible_distribution == "Ubuntu"
+
+- name: Remove the test database
+  tags: db, mariadb
+  mysql_db:
+    name: test
+    state: absent
+    login_user: root
+    login_password: '{{ database_root_password }}'
+  when: ansible_distribution == "Ubuntu"
+
+- name: Create a utility database user account
+  tags: db, mariadb
+  mysql_user:
+    name: '{{ database_utility_user_name }}'
+    password: '{{ database_utility_user_password }}'
+    priv: '*.*:ALL'
+    state: present
+    login_user: root
+    login_password: '{{ database_root_password }}'
+  when: ansible_distribution == "Ubuntu"
+
+- name: Create a database for the client
+  tags: db, mariadb
+  mysql_db:
+    name: '{{ client_database_name }}'
+    state: present
+    login_user: '{{ database_utility_user_name }}'
+    login_password: '{{ database_utility_user_password }}'
+  when: ansible_distribution == "Ubuntu"

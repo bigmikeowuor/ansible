@@ -1,0 +1,100 @@
+- name: Set WordPress Nginx conf file
+  tags: ubuntu, wordpress
+  template:
+    src: '{{ wordpress_nginx_conf_j2 }}'
+    dest: '/etc/nginx/sites-available/{{ wordpress_nginx_conf_file_name }}'
+  when: ansible_distribution == "Ubuntu"
+
+- name: Remove "default" site
+  tags: ubuntu, wordpress
+  file:
+    path: '{{ item.path }}'
+    state: absent
+  loop:
+    - { path: /etc/nginx/sites-available/default }
+    - { path: /etc/nginx/sites-enabled/default }
+  notify:
+    - Restart Nginx
+  when: ansible_distribution == "Ubuntu"
+
+- name: Enable new WordPress site
+  tags: ubuntu, wordpress
+  file:
+    src: '/etc/nginx/sites-available/{{ wordpress_nginx_conf_file_name }}'
+    dest: '/etc/nginx/sites-enabled/{{ wordpress_nginx_conf_file_name }}'
+    state: link
+  notify:
+    - Restart Nginx
+  when: ansible_distribution == "Ubuntu"
+
+- name: Remove unnecessary html files
+  tags: ubuntu, wordpress
+  file:
+    path: '/var/www/html/{{ item.src }}'
+    state: absent
+  loop:
+    - { src: index.html }
+    - { src: index.nginx-debian.html }
+  when: ansible_distribution == "Ubuntu"
+
+- name: Create a document root for WordPress
+  tags: ubuntu, wordpress
+  file:
+    path: '/var/www/html/{{ wordpress_domain_name_primary }}'
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0775'
+  when: ansible_distribution == "Ubuntu"
+
+- name: Add mappings to the /etc/hosts file
+  tags: ubuntu, wordpress
+  blockinfile:
+    path: /etc/hosts
+    block: |
+      {{ server_ip_address }} {{ wordpress_domain_name_primary }} {{ wordpress_domain_name_secondary }}
+    marker: '# {mark} Mapping Block for {{ wordpress_domain_name_primary }}'
+  when: ansible_distribution == "Ubuntu"
+
+- name: Download and unpack the latest version of WordPress
+  tags: ubuntu, wordpress
+  unarchive:
+    src: https://wordpress.org/latest.tar.gz
+    dest: '/var/www/html/{{ wordpress_domain_name_primary }}'
+    remote_src: yes
+    creates: '/var/www/html/{{ wordpress_domain_name_primary }}/wordpress'
+  when: ansible_distribution == "Ubuntu"
+
+- name: Set ownership of the WordPress installation directory
+  tags: ubuntu, wordpress
+  file:
+    path: '/var/www/html/{{ wordpress_domain_name_primary }}'
+    state: directory
+    recurse: yes
+    owner: www-data
+    group: www-data
+  when: ansible_distribution == "Ubuntu"
+
+- name: Set up the WordPress config file
+  tags: ubuntu, wordpress
+  template:
+    src: '{{ wordpress_config_j2 }}'
+    dest: '/var/www/html/{{ wordpress_domain_name_primary }}/wordpress/wp-config.php'
+  when: ansible_distribution == "Ubuntu"
+
+- name: Remove sample WordPress config file
+  tags: ubuntu, wordpress
+  file:
+    path: '/var/www/html/{{ wordpress_domain_name_primary }}/wordpress/wp-config-sample.php'
+    state: absent
+  when: ansible_distribution == "Ubuntu"
+
+- name: Set permissions for the sub directories in the WordPress installation directory
+  tags: ubuntu, wordpress
+  shell: "/usr/bin/find /var/www/html/{{ wordpress_domain_name_primary }}/wordpress/ -type d -exec chmod 775 {} \\;"
+  when: ansible_distribution == "Ubuntu"
+
+- name: Set permissions for files in the WordPress installation directory
+  tags: ubuntu, wordpress
+  shell: "/usr/bin/find /var/www/html/{{ wordpress_domain_name_primary }}/wordpress/ -type f -exec chmod 644 {} \\;"
+  when: ansible_distribution == "Ubuntu"

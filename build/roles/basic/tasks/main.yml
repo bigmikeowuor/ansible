@@ -1,0 +1,90 @@
+- name: Set SSH key for the Ansible utility account
+  tags: always, basic
+  authorized_key:
+    user: s3apollo
+    key: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPCoxhYvbnmzNw832NEPBytTZbkPDZMjkUwtiRWmo0hO Ansible Default'
+  when: ansible_distribution == "Ubuntu"
+
+- name: Set the server timezone to Africa/Nairobi
+  tags: always, basic
+  timezone:
+    name: Africa/Nairobi
+  when: ansible_distribution == "Ubuntu"
+
+- name: Install general packages
+  tags: always, basic
+  apt:
+    name:
+      - apt-transport-https
+      - build-essential
+      - curl
+      - dirmngr
+      - git
+      - software-properties-common
+      - ufw
+      - wget
+    state: latest
+  when: ansible_distribution == "Ubuntu"
+
+- name: Add NodeSource package signing key
+  tags: always, basic
+  apt_key:
+    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+    state: present
+  when: ansible_distribution == "Ubuntu"
+
+- name: Add a repository for Node.js version 12
+  tags: always, basic
+  apt_repository:
+    repo: deb https://deb.nodesource.com/node_12.x {{ ansible_lsb.codename }} main
+    state: present
+    update_cache: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: Install Node.js version 12
+  tags: always, basic
+  apt:
+    name: nodejs
+  when: ansible_distribution == "Ubuntu"
+
+- name: Enable the Firewall
+  tags: always, basic
+  ufw:
+    state: enabled
+  when: ansible_distribution == "Ubuntu"
+
+- name: Allow HTTP traffic through the firewall
+  tags: always, basic
+  ufw:
+    rule: allow
+    port: '80'
+    proto: tcp
+  when: ansible_distribution == "Ubuntu"
+
+- name: Allow HTTPS traffic through the firewall
+  tags: always, basic
+  ufw:
+    rule: allow
+    port: '443'
+    proto: tcp
+  when: ansible_distribution == "Ubuntu"
+
+- name: Allow SSH traffic through the firewall
+  tags: always, basic
+  ufw:
+    rule: allow
+    port: '22'
+    proto: tcp
+  when: ansible_distribution == "Ubuntu"
+
+- name: Install the Nginx web server with Certbot
+  tags: always, basic
+  apt:
+    name:
+      - nginx
+      - certbot
+      - python3-certbot-nginx
+    state: latest
+  notify:
+    - Restart Nginx
+  when: ansible_distribution == "Ubuntu"

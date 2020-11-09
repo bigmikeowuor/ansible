@@ -1,0 +1,62 @@
+---
+- hosts: all
+  become: true
+  pre_tasks:
+    - name: Update the server repository cache
+      tags: always
+      apt:
+        update_cache: yes
+      changed_when: false
+      when: ansible_distribution == "Ubuntu"
+
+- hosts: all
+  become: true
+  tasks:
+    - name: Create the Ansible utility account
+      tags: always
+      user:
+        name: s3apollo
+        groups: root,www-data
+      when: ansible_distribution == "Ubuntu"
+
+    - name: Set SSH key for the Ansible utility account
+      tags: always
+      authorized_key:
+        user: s3apollo
+        key: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPCoxhYvbnmzNw832NEPBytTZbkPDZMjkUwtiRWmo0hO Ansible Default'
+      when: ansible_distribution == "Ubuntu"
+
+    - name: Set sudoers file for the Ansible utility account
+      tags: always
+      copy:
+        src: sudoer_s3apollo
+        dest: /etc/sudoers.d/s3apollo
+        owner: root
+        group: root
+        mode: '0440'
+      when: ansible_distribution == "Ubuntu"
+
+    - name: Disallow login to the server via SSH as root
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PermitRootLogin yes'
+        line: PermitRootLogin no
+      notify:
+        - Reload SSHD
+      when: ansible_distribution == "Ubuntu"
+
+    - name: Disallow login to the server via SSH by password authentication
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#PasswordAuthentication yes'
+        line: PasswordAuthentication no
+      notify:
+        - Reload SSHD
+      when: ansible_distribution == "Ubuntu"
+
+  handlers:
+    - name: Reload SSHD
+      service:
+        name: sshd
+        state: reloaded
+      when: ansible_distribution == "Ubuntu"
