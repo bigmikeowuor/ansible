@@ -4,14 +4,15 @@
 # S3 Demo Site - creative-nature.s3.co.ke - 07/11/2020 @ 18:30
 # S3 Demo Site - mando-coffee.s3.co.ke - 07/11/2020 @ 18:30
 # S3 Demo Site - mando-recipes.s3.co.ke - 07/11/2020 @ 19:00
+# S3 Demo Site - axios-http.s3.co.ke - 09/11/2020 @ 15:00
 
 # Client configuration settings
 server_ip_address: '178.79.179.200'
 
 # JAM stack configuration settings
 
-jamstack_domain_name_primary: 'mando-recipes.s3.co.ke'
-jamstack_domain_name_secondary: 'www.mando-recipes.s3.co.ke'
+jamstack_domain_name_primary: 'axios-http.s3.co.ke'
+jamstack_domain_name_secondary: 'www.axios-http.s3.co.ke'
 jamstack_index_html_j2: index.html.j2
 jamstack_nginx_conf_j2: nginx.conf.j2
-jamstack_nginx_conf_file_name: 'mando-recipes.s3.co.ke.conf'
+jamstack_nginx_conf_file_name: 'axios-http.s3.co.ke.conf'
