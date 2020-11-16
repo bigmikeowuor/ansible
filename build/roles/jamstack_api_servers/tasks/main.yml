@@ -30,11 +30,11 @@
 - name: Remove unnecessary html files
   tags: ubuntu, jam
   file:
-    path: '/var/www/html/{{ item.src }}'
+    path: '/var/www/html/{{ item.file }}'
     state: absent
   loop:
-    - { src: index.html }
-    - { src: index.nginx-debian.html }
+    - { file: index.html }
+    - { file: index.nginx-debian.html }
   when: ansible_distribution == "Ubuntu"
 
 - name: Create a document root for JAM stack site
