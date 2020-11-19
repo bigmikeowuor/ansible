@@ -54,7 +54,7 @@
     dest: '/var/www/html/{{ jamstack_domain_name_primary }}/index.html'
     owner: www-data
     group: www-data
-    mode: '0775'
+    mode: '0777'
   when: ansible_distribution == "Ubuntu"
 
 - name: Add mappings to the /etc/hosts file
