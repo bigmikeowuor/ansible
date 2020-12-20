@@ -23,7 +23,7 @@
       tags: always
       authorized_key:
         user: s3apollo
-        key: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPCoxhYvbnmzNw832NEPBytTZbkPDZMjkUwtiRWmo0hO Ansible Default'
+        key: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE2AXKg7hpaIR+WWP0jXu/Y8Xt12nAxpdgAJQhVqvSb2 Ansible Default'
       when: ansible_distribution == "Ubuntu"
 
     - name: Set sudoers file for the Ansible utility account
