@@ -1,20 +1,17 @@
 [mariadb_servers]
-# 88.80.188.177
-# 212.71.250.69
+109.74.195.88
 
 [php_servers]
-# 88.80.188.177
-# 212.71.250.69
+109.74.195.88
 
 [adminer_servers]
-# 88.80.188.177
-# 212.71.250.69
+109.74.195.88
 
 [wordpress_servers]
-# 212.71.250.69
+109.74.195.88
 
 [jamstack_api_servers]
-# 88.80.188.177
+# xxx.xxx.xxx.xxx
 
 [jamstack_servers]
-178.79.179.200
+# xxx.xxx.xxx.xxx
