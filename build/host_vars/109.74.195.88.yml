@@ -1,22 +1,23 @@
 # This is a WordPress server. It may host more than one domain for the client. Indicate them below:
 # Tharuma Trevisan Advocates - tta.co.ke - 20/12/2020 @ 21:00
+# Aerocruise Air Charters - aerocruise.co.ke - 20/12/2020 @ 22:00
 
 # Client configuration settings
 server_ip_address: '109.74.195.88'
-client_database_name: 'tta_wordpress_db'
+client_database_name: 'aac_wordpress_db'
 
 # WordPress configuration settings
-wordpress_client_code: 'tta'
-wordpress_domain_name_primary: 'tta.co.ke'
-wordpress_domain_name_secondary: 'www.tta.co.ke'
+wordpress_client_code: 'aac'
+wordpress_domain_name_primary: 'aerocruise.co.ke'
+wordpress_domain_name_secondary: 'www.aerocruise.co.ke'
 wordpress_nginx_conf_j2: nginx.conf.j2
-wordpress_nginx_conf_file_name: 'tta.co.ke.conf'
+wordpress_nginx_conf_file_name: 'aerocruise.co.ke.conf'
 wordpress_config_j2: wp-config.php.j2
 
 # Adminer configuration settings
-adminer_domain_name: 'adminer.tta.co.ke'
+adminer_domain_name: 'adminer.aerocruise.co.ke'
 adminer_nginx_conf_j2: nginx.conf.j2
-adminer_nginx_conf_file_name: 'adminer.tta.co.ke.conf'
+adminer_nginx_conf_file_name: 'adminer.aerocruise.co.ke.conf'
 
 # Common database settings
 database_root_password: 'Pass@word8475'
